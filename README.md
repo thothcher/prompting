@@ -67,6 +67,10 @@ js/mountain-view.js   page 2
 js/presenter.js       presenter mode
 js/app.js             page switching, theme and keyboard shortcuts
 js/data/              all the content
+favicon.svg           tab icon
+og-image.png          preview image shown when the link is shared
+robots.txt            rules for search engines
+sitemap.xml           page list for search engines
 ```
 
 Plain HTML, CSS and JavaScript, with no libraries and no build tools.
