@@ -1,0 +1,157 @@
+/* Graph of Prompts: design tokens.
+   Dark is the default look. Light is an explicit choice: the theme toggle
+   (or a host) sets data-theme="light" on <html>. Every token is defined here
+   first, then redefined for light. */
+
+:root {
+  color-scheme: dark;
+
+  /* Brand. #063271 is the main color; the rest are its shades and tints. */
+  --brand: #063271;
+  --brand-deep: #041d45;
+  --brand-ink: #020a18;
+  --brand-lift: #0b3f8f;
+
+  /* Surfaces */
+  --bg: #020a18;
+  --bg-glow-1: rgba(6, 50, 113, 0.62);
+  --bg-glow-2: rgba(11, 63, 143, 0.34);
+  --surface: rgba(6, 30, 72, 0.62);
+  --surface-strong: rgba(7, 34, 80, 0.94);
+  --surface-hover: rgba(14, 58, 128, 0.5);
+  --topbar-bg: rgba(2, 10, 24, 0.78);
+  --scrim: rgba(1, 6, 16, 0.64);
+  --code-bg: rgba(1, 8, 22, 0.55);
+  --line: rgba(80, 140, 225, 0.26);
+  --line-strong: rgba(110, 175, 255, 0.5);
+  --grid-minor: rgba(96, 150, 230, 0.055);
+  --grid-major: rgba(96, 150, 230, 0.11);
+
+  /* Text */
+  --text: #e8f0ff;
+  --text-2: #b3c5e6;
+  --text-3: #8aa1ca;
+  --text-on-accent: #04122b;
+
+  /* Accent: a light tint of the brand hue */
+  --accent: #5fb4ff;
+  --accent-2: #a6d7ff;
+  --accent-soft: rgba(95, 180, 255, 0.13);
+  --glow: rgba(95, 180, 255, 0.3);
+  --focus: #8fd0ff;
+  --grad-brand: linear-gradient(90deg, var(--p-b), var(--p-e) 50%, var(--p-s));
+
+  /* BLUEPRINTS block colors.
+     Intent (B L U) is cyan, Engineering (E P R I) is azure,
+     Quality and delivery (N T S) is indigo. */
+  --p-b: hsl(189 78% 58%);
+  --p-l: hsl(196 82% 61%);
+  --p-u: hsl(203 88% 64%);
+  --p-e: hsl(211 95% 67%);
+  --p-p: hsl(218 95% 70%);
+  --p-r: hsl(225 92% 72%);
+  --p-i: hsl(231 90% 74%);
+  --p-n: hsl(238 86% 76%);
+  --p-t: hsl(245 82% 78%);
+  --p-s: hsl(252 78% 79%);
+
+  /* Mountain */
+  --sky-top: #01050d;
+  --sky-bottom: #05204a;
+  --snow-top: rgba(222, 240, 255, 0.96);
+  --snow-bottom: rgba(120, 190, 255, 0.4);
+  --stratum-1: #1656b3;
+  --stratum-2: #0f4494;
+  --stratum-3: #0a3474;
+  --stratum-4: #062655;
+  --stratum-far: #0a2c63;
+  --on-stratum: #eef5ff;
+  --ridge: rgba(170, 215, 255, 0.5);
+  --star: 220, 235, 255;
+
+  /* Type */
+  --font-display: "Saira", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, monospace;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-md: 1.0625rem;
+  --fs-lg: 1.1875rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+  --fs-4xl: 3rem;
+
+  /* Space, shape, depth */
+  --gutter: clamp(16px, 4vw, 40px);
+  --maxw: 1240px;
+  --topbar-h: 64px;
+  --radius: 3px;
+  --chamfer: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+  --chamfer-sm: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  --shadow: 0 18px 50px rgba(1, 6, 16, 0.55);
+  --shadow-glow: 0 0 0 1px var(--line-strong), 0 0 34px var(--glow);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --t1: 160ms;
+  --t2: 260ms;
+  --t3: 420ms;
+  --t4: 640ms;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #eef3fb;
+  --bg-glow-1: rgba(6, 50, 113, 0.1);
+  --bg-glow-2: rgba(95, 150, 230, 0.14);
+  --surface: rgba(255, 255, 255, 0.8);
+  --surface-strong: rgba(255, 255, 255, 0.97);
+  --surface-hover: rgba(6, 50, 113, 0.06);
+  --topbar-bg: rgba(238, 243, 251, 0.84);
+  --scrim: rgba(6, 34, 78, 0.3);
+  --code-bg: rgba(6, 50, 113, 0.06);
+  --line: rgba(6, 50, 113, 0.16);
+  --line-strong: rgba(6, 50, 113, 0.36);
+  --grid-minor: rgba(6, 50, 113, 0.045);
+  --grid-major: rgba(6, 50, 113, 0.085);
+
+  --text: #06224e;
+  --text-2: #33496f;
+  --text-3: #566c92;
+  --text-on-accent: #ffffff;
+
+  --accent: #0b5bd3;
+  --accent-2: #063271;
+  --accent-soft: rgba(11, 91, 211, 0.09);
+  --glow: rgba(11, 91, 211, 0.18);
+  --focus: #0b5bd3;
+
+  --p-b: hsl(189 92% 28%);
+  --p-l: hsl(196 88% 31%);
+  --p-u: hsl(203 84% 34%);
+  --p-e: hsl(211 80% 38%);
+  --p-p: hsl(218 72% 42%);
+  --p-r: hsl(225 64% 45%);
+  --p-i: hsl(231 56% 47%);
+  --p-n: hsl(238 50% 49%);
+  --p-t: hsl(245 46% 49%);
+  --p-s: hsl(252 44% 48%);
+
+  --sky-top: #c9dcf6;
+  --sky-bottom: #eef3fb;
+  --snow-top: rgba(255, 255, 255, 0.98);
+  --snow-bottom: rgba(150, 196, 246, 0.75);
+  --stratum-1: #2c6cc5;
+  --stratum-2: #1e57a9;
+  --stratum-3: #13438b;
+  --stratum-4: #063271;
+  --stratum-far: #9dbfe9;
+  --on-stratum: #f4f8ff;
+  --ridge: rgba(255, 255, 255, 0.5);
+  --star: 6, 50, 113;
+
+  --shadow: 0 18px 44px rgba(6, 34, 78, 0.14);
+}

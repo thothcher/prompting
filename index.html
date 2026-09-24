@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Graph of Prompts</title>
+<meta name="description" content="Ten Angular and Next.js project prompts taken apart block by block, and the knowledge mountain behind one simple prompt.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23063271'/%3E%3Cpath d='M5 23 L12 11 L16.5 17.5 L19.5 13.5 L27 23' fill='none' stroke='%23a6d7ff' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..700&family=Manrope:wght@400..800&family=Saira:wdth,wght@75..125,400..900&display=swap">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/prompts.css">
+<link rel="stylesheet" href="css/mountain.css">
+<script>
+  (function () {
+    try {
+      var d = document.documentElement;
+      var t = localStorage.getItem('gop.theme');
+      if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t);
+      if (localStorage.getItem('gop.presenter') === 'on') d.setAttribute('data-presenter', 'on');
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-mark" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="2"/><path d="M6 23 L12.5 11.5 L16.5 17.5 L19.5 13.5 L26 23"/><circle cx="12.5" cy="11.5" r="1.6"/><circle cx="19.5" cy="13.5" r="1.6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="1.5"/><path d="M15.5 8.5V5.5A1.5 1.5 0 0 0 14 4H5.5A1.5 1.5 0 0 0 4 5.5V14a1.5 1.5 0 0 0 1.5 1.5h3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.3 4.3l1.6 1.6M18.1 18.1l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.3 19.7l1.6-1.6M18.1 5.9l1.6-1.6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.6A8.2 8.2 0 1 1 9.4 4a6.6 6.6 0 0 0 10.6 10.6z"/></symbol>
+  <symbol id="i-presenter" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7.5 12.5l3-3 2.2 2.2 3.8-3.8"/></symbol>
+  <symbol id="i-fullscreen" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="1.5"/><path d="M6.5 10h.01M9.5 10h.01M12.5 10h.01M15.5 10h.01M18 10h.01M7.5 14h9"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5l9 16H3z"/><path d="M12 10v4.2M12 17.2h.01"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5h.01"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/></symbol>
+  <symbol id="i-summit" viewBox="0 0 24 24"><path d="M3 19.5l6.5-11 4 6.5 2.5-3.5 5 8z"/></symbol>
+</svg>
+
+<div class="bg" aria-hidden="true"></div>
+
+<header class="topbar" id="topbar">
+  <div class="topbar__inner wrap">
+    <a class="brand" href="#prompts">
+      <span class="brand__mark"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mark"></use></svg></span>
+      <span class="brand__name">Graph of Prompts</span>
+    </a>
+    <nav class="tabs" aria-label="Pages">
+      <a class="tab" href="#prompts" data-route="prompts"><span class="tab__num">01</span>Prompts</a>
+      <a class="tab" href="#mountain" data-route="mountain"><span class="tab__num">02</span>Mountain</a>
+    </nav>
+    <div class="hud" id="hud" role="status" hidden></div>
+    <div class="tools">
+      <button class="icon-btn" id="btn-presenter" type="button" aria-pressed="false" title="Presenter mode (Shift+P)">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-presenter"></use></svg>
+        <span class="sr-only">Presenter mode</span>
+      </button>
+      <button class="icon-btn" id="btn-theme" type="button" title="Switch theme (T)">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-sun"></use></svg>
+        <span class="sr-only">Switch to light theme</span>
+      </button>
+      <button class="icon-btn" id="btn-fullscreen" type="button" aria-pressed="false" title="Fullscreen (F)">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-fullscreen"></use></svg>
+        <span class="sr-only">Fullscreen</span>
+      </button>
+      <button class="icon-btn" id="btn-help" type="button" title="Keyboard shortcuts (?)">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-keyboard"></use></svg>
+        <span class="sr-only">Keyboard shortcuts</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- Page 1: prompts -->
+  <div class="view" id="view-prompts" data-view="prompts">
+    <section class="hero wrap" id="framework" aria-labelledby="hero-title">
+      <svg class="hero__drafting" viewBox="0 0 360 360" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="180" cy="180" r="150"></circle>
+          <circle cx="180" cy="180" r="104" stroke-dasharray="3 6"></circle>
+          <circle cx="180" cy="180" r="42"></circle>
+          <path d="M180 14v332M14 180h332"></path>
+          <path d="M74 74l212 212M286 74L74 286" stroke-dasharray="2 9"></path>
+          <path d="M180 30v14M180 316v14M30 180h14M316 180h14"></path>
+        </g>
+        <g fill="currentColor" font-family="JetBrains Mono, Consolas, monospace" font-size="10" letter-spacing="1.5">
+          <text x="188" y="26">R 150</text>
+          <text x="232" y="176">R 42</text>
+          <text x="20" y="346">SHEET 01 / BLUEPRINTS</text>
+        </g>
+      </svg>
+      <p class="eyebrow">Prompt engineering for Angular and Next.js</p>
+      <h1 class="hero__title" id="hero-title">A prompt is a <span class="grad-text">blueprint.</span></h1>
+      <p class="hero__lead">Ten real prompts for building Angular and Next.js projects. Each one is split into the ten blocks a good project prompt needs. Click any block to see why it is there and what it changes.</p>
+      <ol class="bp" id="bp-letters" aria-label="The ten BLUEPRINTS blocks"></ol>
+      <div class="bp-groups" id="bp-groups" aria-hidden="true"></div>
+      <p class="hero__meta" id="hero-meta"></p>
+      <p class="hero__note" id="hero-note"></p>
+    </section>
+
+    <section class="section wrap" id="origins" aria-labelledby="origins-title">
+      <header class="section__head">
+        <p class="eyebrow">Where it comes from</p>
+        <h2 id="origins-title">Built on the frameworks you already know</h2>
+        <p class="section__lead">CRAFT, CO-STAR and RISEN are the best-known prompt frameworks. They were designed for general writing tasks. Context engineering is the newer idea: give the model everything it needs, not just a well-worded request.</p>
+      </header>
+      <div class="origins" id="origins-cards"></div>
+      <div class="matrix-wrap" id="matrix"></div>
+      <div class="matrix__legend" aria-hidden="true">
+        <span><i class="cov" data-v="2"></i>Covered</span>
+        <span><i class="cov" data-v="1"></i>Partly covered</span>
+        <span><i class="cov" data-v="0"></i>Not covered</span>
+      </div>
+    </section>
+
+    <section class="section wrap" id="rules" aria-labelledby="rules-title">
+      <header class="section__head">
+        <p class="eyebrow">Rules that hold for every prompt</p>
+        <h2 id="rules-title">Six habits of good prompts</h2>
+        <p class="section__lead">Each habit lives in one or more BLUEPRINTS blocks. You will see all six at work in the prompts below.</p>
+      </header>
+      <ul class="rules" id="rules-grid"></ul>
+    </section>
+
+    <section class="section wrap" id="library" aria-labelledby="library-title">
+      <header class="section__head section__head--row">
+        <div class="section__intro">
+          <p class="eyebrow">The library</p>
+          <h2 id="library-title">Ten prompts, taken apart</h2>
+          <p class="section__lead">Ordered from beginner to expert. Each prompt adds one new technique on top of the blocks.</p>
+        </div>
+        <div class="seg" id="filter" role="group" aria-label="Filter prompts by framework"></div>
+      </header>
+      <ol class="drawers" id="drawers"></ol>
+    </section>
+
+    <footer class="page-foot wrap">
+      <a class="next-link" href="#mountain">
+        <span class="eyebrow">Next page</span>
+        <span class="next-link__title">Every word is a summit</span>
+        <span class="next-link__sub">Why a short prompt hides a mountain of knowledge</span>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <p class="credit">Prepared for a lecture at IT Step Academy. Framework versions checked in September 2026: Angular 22 and Next.js 16.3.</p>
+    </footer>
+  </div>
+
+  <!-- Page 2: knowledge mountain -->
+  <div class="view" id="view-mountain" data-view="mountain" hidden>
+    <section class="m-hero wrap" aria-labelledby="m-title">
+      <p class="eyebrow">The knowledge mountain</p>
+      <h1 class="m-title" id="m-title">Every word is a <span class="grad-text">summit.</span></h1>
+      <p class="m-lead">A short prompt looks simple. Under each technical word is a whole mountain of knowledge: how the framework does it, the code you write, what the browser and network do, and the ideas underneath that never change.</p>
+    </section>
+
+    <div class="m-top" id="m-top">
+      <div class="wrap">
+        <div class="console holo" id="m-console">
+          <span class="corner corner--tl" aria-hidden="true"></span>
+          <span class="corner corner--tr" aria-hidden="true"></span>
+          <span class="corner corner--bl" aria-hidden="true"></span>
+          <span class="corner corner--br" aria-hidden="true"></span>
+          <div class="console__bar">
+            <span class="console__dot" aria-hidden="true"></span>
+            <span class="console__file">prompt.txt</span>
+            <span>the easiest prompt</span>
+            <span class="console__stat" id="m-words"></span>
+          </div>
+          <p class="console__body" id="m-prompt"></p>
+        </div>
+      </div>
+      <div class="range-stage" id="m-stage">
+        <canvas class="stars" id="m-stars" aria-hidden="true"></canvas>
+        <div class="range-scroll">
+          <svg class="range" id="m-range" role="group" aria-label="Mountain range: one peak per technical word, in the order they appear in the prompt"></svg>
+        </div>
+        <p class="range-legend">Peaks follow the order of the words in the prompt. Peak height shows how many concepts sit under each word.</p>
+      </div>
+      <svg class="connectors" id="m-connectors" aria-hidden="true"></svg>
+    </div>
+
+    <section class="xs-section wrap" id="m-xs-section" aria-labelledby="xs-title">
+      <h2 class="sr-only" id="xs-title">Inside the selected summit</h2>
+      <div class="xs-bar">
+        <div class="xs-tabs" id="m-tabs" role="tablist" aria-label="Summits"></div>
+        <div class="xs-controls" id="m-controls"></div>
+      </div>
+      <div class="xs-host" id="m-xs-host">
+        <div class="xs" id="m-xs" role="tabpanel" aria-labelledby="xs-title"></div>
+      </div>
+    </section>
+
+    <section class="summary wrap" id="m-summary" aria-labelledby="summary-title">
+      <p class="eyebrow">What one sentence carries</p>
+      <h2 class="sr-only" id="summary-title">Summary</h2>
+      <dl class="stats" id="m-stats"></dl>
+      <div class="summary__text" id="m-summary-text"></div>
+    </section>
+
+    <footer class="page-foot wrap">
+      <a class="next-link" href="#prompts">
+        <span class="eyebrow">Back to page one</span>
+        <span class="next-link__title">Ten prompts, taken apart</span>
+        <span class="next-link__sub">See how the BLUEPRINTS blocks make the mountain explicit</span>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"></use></svg>
+      </a>
+      <p class="credit">Prepared for a lecture at IT Step Academy. Framework versions checked in September 2026: Angular 22 and Next.js 16.3.</p>
+    </footer>
+  </div>
+</main>
+
+<div id="layer-root"></div>
+<div class="blackout" id="blackout" hidden></div>
+
+<script defer src="js/data/framework.js"></script>
+<script defer src="js/data/prompts.js"></script>
+<script defer src="js/data/mountain.js"></script>
+<script defer src="js/core.js"></script>
+<script defer src="js/holo.js"></script>
+<script defer src="js/prompts-view.js"></script>
+<script defer src="js/mountain-view.js"></script>
+<script defer src="js/presenter.js"></script>
+<script defer src="js/app.js"></script>
+</body>
+</html>
