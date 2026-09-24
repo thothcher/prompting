@@ -18,6 +18,7 @@
   --bg-glow-2: rgba(11, 63, 143, 0.34);
   --surface: rgba(6, 30, 72, 0.62);
   --surface-strong: rgba(7, 34, 80, 0.94);
+  --surface-solid: #072250;
   --surface-hover: rgba(14, 58, 128, 0.5);
   --topbar-bg: rgba(2, 10, 24, 0.78);
   --scrim: rgba(1, 6, 16, 0.64);
@@ -109,6 +110,7 @@
   --bg-glow-2: rgba(95, 150, 230, 0.14);
   --surface: rgba(255, 255, 255, 0.8);
   --surface-strong: rgba(255, 255, 255, 0.97);
+  --surface-solid: #ffffff;
   --surface-hover: rgba(6, 50, 113, 0.06);
   --topbar-bg: rgba(238, 243, 251, 0.84);
   --scrim: rgba(6, 34, 78, 0.3);

@@ -50,6 +50,12 @@
   position: relative;
 }
 
+/* The hovered letter's question box must sit above the group labels below it */
+.bp__item:hover,
+.bp__item:focus-within {
+  z-index: 30;
+}
+
 .bp__tile {
   position: relative;
   display: flex;
@@ -117,7 +123,7 @@
   line-height: 1.4;
   text-align: left;
   color: var(--text);
-  background: var(--surface-strong);
+  background: var(--surface-solid);
   border: 1px solid color-mix(in srgb, var(--pc) 60%, transparent);
   box-shadow: var(--shadow);
   transform: translate(-50%, 4px);
