@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Graph of Prompts — Prompt Engineering for Angular and Next.js</title>
-<meta name="description" content="Ten prompts for building Angular 22 and Next.js 16.3 projects, split into the ten BLUEPRINTS blocks and explained, plus the knowledge behind one simple prompt.">
+<meta name="description" content="Ten prompts for Angular 22 and Next.js 16.3 projects, split into the ten BLUEPRINTS blocks and explained, plus a 3D knowledge mountain for eleven more.">
 <meta name="keywords" content="prompt engineering, AI prompts, AI coding, Angular, Next.js, BLUEPRINTS, CRAFT, CO-STAR, RISEN, context engineering, lecture, IT Step Academy">
 <meta name="author" content="thothcher">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="Graph of Prompts">
 <meta property="og:url" content="https://thothcher.github.io/prompting/">
 <meta property="og:title" content="Graph of Prompts — A prompt is a blueprint">
-<meta property="og:description" content="Ten real prompts for building Angular and Next.js projects, taken apart block by block, plus the knowledge behind one simple prompt.">
+<meta property="og:description" content="Ten real prompts for building Angular and Next.js projects, taken apart block by block, plus the 3D knowledge mountain behind eleven one-line prompts.">
 <meta property="og:image" content="https://thothcher.github.io/prompting/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Graph of Prompts: the headline A prompt is a blueprint above the ten BLUEPRINTS letters">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Graph of Prompts — A prompt is a blueprint">
-<meta name="twitter:description" content="Ten real prompts for building Angular and Next.js projects, taken apart block by block, plus the knowledge behind one simple prompt.">
+<meta name="twitter:description" content="Ten real prompts for building Angular and Next.js projects, taken apart block by block, plus the 3D knowledge mountain behind eleven one-line prompts.">
 <meta name="twitter:image" content="https://thothcher.github.io/prompting/og-image.png">
 <meta name="twitter:image:alt" content="Graph of Prompts: the headline A prompt is a blueprint above the ten BLUEPRINTS letters">
 
@@ -37,7 +37,7 @@
   "@type": "LearningResource",
   "name": "Graph of Prompts",
   "headline": "A prompt is a blueprint",
-  "description": "Ten prompts for building Angular 22 and Next.js 16.3 projects, split into the ten BLUEPRINTS blocks and explained, plus the knowledge behind one simple prompt.",
+  "description": "Ten prompts for Angular 22 and Next.js 16.3 projects, split into the ten BLUEPRINTS blocks and explained, plus a 3D knowledge mountain for eleven more.",
   "url": "https://thothcher.github.io/prompting/",
   "image": "https://thothcher.github.io/prompting/og-image.png",
   "inLanguage": "en",
@@ -208,11 +208,23 @@
     <section class="m-hero wrap" aria-labelledby="m-title">
       <p class="eyebrow">The knowledge mountain</p>
       <h1 class="m-title" id="m-title">Every word is a <span class="grad-text">summit.</span></h1>
-      <p class="m-lead">A short prompt looks simple. Under each technical word is a whole mountain of knowledge: how the framework does it, the code you write, what the browser and network do, and the ideas underneath that never change.</p>
+      <p class="m-lead">Eleven one-sentence prompts, each asking an AI for a whole website. They look simple, but under every technical word is a mountain of knowledge: how the framework does it, the code you write, what the browser and network do, and the ideas underneath that never change.</p>
     </section>
 
     <div class="m-top" id="m-top">
       <div class="wrap">
+        <div class="mslider" id="m-slider">
+          <p class="mslider__pos" id="m-slider-pos"></p>
+          <button class="icon-btn" id="m-slider-prev" type="button" title="Previous prompt ([)">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-left"></use></svg>
+            <span class="sr-only">Previous prompt</span>
+          </button>
+          <div class="mslider__track" id="m-slider-track" role="group" aria-label="Choose a prompt"></div>
+          <button class="icon-btn" id="m-slider-next" type="button" title="Next prompt (])">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-right"></use></svg>
+            <span class="sr-only">Next prompt</span>
+          </button>
+        </div>
         <div class="console holo" id="m-console">
           <span class="corner corner--tl" aria-hidden="true"></span>
           <span class="corner corner--tr" aria-hidden="true"></span>
@@ -220,8 +232,8 @@
           <span class="corner corner--br" aria-hidden="true"></span>
           <div class="console__bar">
             <span class="console__dot" aria-hidden="true"></span>
-            <span class="console__file">prompt.txt</span>
-            <span>the easiest prompt</span>
+            <span class="console__file" id="m-file">prompt-01.txt</span>
+            <span id="m-project"></span>
             <span class="console__stat" id="m-words"></span>
           </div>
           <p class="console__body" id="m-prompt"></p>
@@ -272,10 +284,12 @@
 
 <script defer src="js/data/framework.js"></script>
 <script defer src="js/data/prompts.js"></script>
+<script defer src="js/data/mountain-words.js"></script>
 <script defer src="js/data/mountain.js"></script>
 <script defer src="js/core.js"></script>
 <script defer src="js/holo.js"></script>
 <script defer src="js/prompts-view.js"></script>
+<script defer src="js/mountain3d.js"></script>
 <script defer src="js/mountain-view.js"></script>
 <script defer src="js/presenter.js"></script>
 <script defer src="js/app.js"></script>

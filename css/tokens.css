@@ -70,6 +70,25 @@
   --ridge: rgba(170, 215, 255, 0.5);
   --star: 220, 235, 255;
 
+  /* 3D cross-section (read by js/mountain3d.js; hex values only) */
+  --m3d-rock-1: #2a5391;
+  --m3d-rock-2: #22467e;
+  --m3d-rock-3: #1b3a6b;
+  --m3d-rock-4: #152f59;
+  --m3d-cut-1: #2b69c6;
+  --m3d-cut-2: #2257ac;
+  --m3d-cut-3: #1a4892;
+  --m3d-cut-4: #123a76;
+  --m3d-peak: #3a5f99;
+  --m3d-snow: #eaf4ff;
+  --m3d-fog: #0b1a35;
+  --m3d-line: #7cc4ff;
+  --m3d-grid: #1c4486;
+  --m3d-bg: #020a18;
+  --m3d-sky: #bcdcff;
+  --m3d-ground: #06224e;
+  --m3d-shadow: 0.38;
+
   /* Type */
   --font-display: "Saira", "Segoe UI", system-ui, sans-serif;
   --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
@@ -154,6 +173,24 @@
   --on-stratum: #f4f8ff;
   --ridge: rgba(255, 255, 255, 0.5);
   --star: 6, 50, 113;
+
+  --m3d-rock-1: #6f93c9;
+  --m3d-rock-2: #5e82b8;
+  --m3d-rock-3: #4e72a8;
+  --m3d-rock-4: #3f6297;
+  --m3d-cut-1: #3d82e0;
+  --m3d-cut-2: #2e6ccb;
+  --m3d-cut-3: #2258b0;
+  --m3d-cut-4: #174593;
+  --m3d-peak: #7d9fd0;
+  --m3d-snow: #ffffff;
+  --m3d-fog: #aebfd8;
+  --m3d-line: #0b5bd3;
+  --m3d-grid: #a9c0e4;
+  --m3d-bg: #eef3fb;
+  --m3d-sky: #ffffff;
+  --m3d-ground: #9fb6d8;
+  --m3d-shadow: 0.18;
 
   --shadow: 0 18px 44px rgba(6, 34, 78, 0.14);
 }

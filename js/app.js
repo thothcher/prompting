@@ -21,6 +21,8 @@
     if (hash === 'mountain') return { view: 'mountain' };
     const m = /^p(\d{1,2})$/.exec(hash);
     if (m) return { view: 'prompts', prompt: parseInt(m[1], 10) };
+    const mm = /^m(\d{1,2})$/.exec(hash);
+    if (mm) return { view: 'mountain', mprompt: parseInt(mm[1], 10) };
     if (SECTIONS.includes(hash)) return { view: 'prompts', section: hash };
     return null;
   }
@@ -43,6 +45,7 @@
     const done = () => {
       if (route.view === 'mountain') {
         GOP.mountainView.onShow();
+        if (route.mprompt) GOP.mountainView.setPrompt(route.mprompt - 1);
         if (changed && GOP.presenter.isOn() && !pending) GOP.mountainView.first();
       }
       if (route.prompt) GOP.promptsView.openByNumber(route.prompt);
@@ -157,6 +160,7 @@
               h('section', null,
                 h('h3', null, 'Mountain page'),
                 h('dl', null,
+                  row(['[', ']'], 'Previous or next prompt'),
                   row(['1-6'], 'Choose a summit'),
                   row(['←', '→'], 'Previous or next summit'),
                   row(['Esc'], 'Close a concept')
