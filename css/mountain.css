@@ -894,28 +894,6 @@
   backdrop-filter: blur(8px);
 }
 
-.xs3d__hint {
-  display: grid;
-  justify-items: end;
-  gap: 3px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: var(--text-3);
-}
-
-.xs3d__hint b {
-  font-weight: 600;
-  color: var(--text-2);
-}
-
-html[data-presenter="on"] .xs3d__hint {
-  display: none;
-}
-
 /* Bigger view: the stage fills the window */
 html.xs-expanded {
   overflow: hidden;

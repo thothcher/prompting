@@ -412,7 +412,7 @@
     engine = null;
   }
 
-  // Zoom, face-front and bigger-view buttons, with a reminder of the mouse controls.
+  // Zoom, face-front and bigger-view buttons.
   let expandBtn = null;
   let expanded = false;
 
@@ -427,11 +427,6 @@
         tool('plus', 'Zoom in', () => engine && engine.zoomBy(0.8)),
         tool('reset', 'Face the front again', () => engine && engine.resetView()),
         expandBtn
-      ),
-      h('ul', { class: 'xs3d__hint', 'aria-label': 'Mouse controls' },
-        h('li', null, h('b', null, 'Drag'), ' to turn'),
-        h('li', null, h('b', null, 'Shift + drag'), ' to move'),
-        h('li', null, h('b', null, 'Ctrl + scroll'), ' to zoom')
       )
     );
   }
