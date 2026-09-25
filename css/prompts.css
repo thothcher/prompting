@@ -68,7 +68,7 @@
   font: inherit;
   background: none;
   border: 1px solid transparent;
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transition: transform var(--t2) var(--ease), background var(--t2), border-color var(--t2);
 }
 
@@ -578,7 +578,7 @@
   color: var(--text-2);
   background: none;
   border: 0;
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transition: color var(--t1), background var(--t1);
 }
 
@@ -635,7 +635,7 @@
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--line);
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transition: background var(--t2), border-color var(--t2), box-shadow var(--t2);
 }
 
@@ -860,7 +860,7 @@
   background: var(--pc);
   border: 0;
   opacity: 0.8;
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transform-origin: left center;
   transition: opacity var(--t1), transform var(--t2) var(--ease), box-shadow var(--t2);
 }
@@ -950,7 +950,7 @@
   background: color-mix(in srgb, var(--pc) 4%, transparent);
   border: 1px solid transparent;
   border-left: 3px solid color-mix(in srgb, var(--pc) 65%, transparent);
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transition: background var(--t2), border-color var(--t2), box-shadow var(--t2);
 }
 
@@ -1013,7 +1013,7 @@
   color: var(--pc);
   background: transparent;
   border: 1px solid color-mix(in srgb, var(--pc) 45%, transparent);
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   opacity: 0.75;
   transition: opacity var(--t1), background var(--t1), color var(--t1);
 }
@@ -1231,7 +1231,7 @@
   color: var(--accent);
   background: none;
   border: 0;
-  cursor: pointer;
+  cursor: var(--cur-pointer);
 }
 
 .ex__sec {
@@ -1282,7 +1282,7 @@
   padding: 0;
   background: none;
   border: 0;
-  cursor: pointer;
+  cursor: var(--cur-pointer);
 }
 
 .tick::before {

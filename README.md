@@ -76,6 +76,7 @@ js/mountain3d.js      the 3D mountain (three.js)
 js/vendor/            three.js r149 (MIT license), loaded only on the Mountain page
 js/presenter.js       presenter mode
 js/app.js             page switching, theme and keyboard shortcuts
+js/cursor.js          the trailing cursor reticle
 js/data/              all the content
 favicon.svg           tab icon
 og-image.png          preview image shown when the link is shared

@@ -83,7 +83,7 @@
   color: var(--text-2);
   background: var(--surface);
   border: 1px solid var(--line);
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   scroll-snap-align: center;
   transition: border-color var(--t2), background var(--t2), box-shadow var(--t2);
 }
@@ -129,7 +129,7 @@
 
 .mslider .icon-btn:disabled {
   opacity: 0.35;
-  cursor: default;
+  cursor: var(--cur-default);
 }
 
 @media (max-width: 560px) {
@@ -214,7 +214,7 @@
   color: var(--accent-2);
   background: var(--accent-soft);
   border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transition: color var(--t2), background var(--t2), border-color var(--t2), box-shadow var(--t2);
 }
 
@@ -249,7 +249,7 @@
   background: transparent;
   border-width: 0;
   box-shadow: none;
-  cursor: text;
+  cursor: var(--cur-default);
 }
 
 .kw.is-unlit sup {
@@ -399,7 +399,7 @@
 }
 
 .peak {
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   outline: none;
   transition: opacity var(--t3) var(--ease), transform var(--t4) var(--ease);
 }
@@ -538,7 +538,7 @@
   color: var(--text-2);
   background: var(--surface);
   border: 1px solid var(--line);
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transition: color var(--t1), background var(--t1), border-color var(--t1);
 }
 
@@ -747,7 +747,7 @@
   color: var(--on-stratum);
   background: rgba(255, 255, 255, 0.09);
   border: 1px solid rgba(255, 255, 255, 0.22);
-  cursor: pointer;
+  cursor: var(--cur-pointer);
   transition: background var(--t1), border-color var(--t1), box-shadow var(--t1), transform var(--t2) var(--ease);
 }
 
@@ -871,14 +871,14 @@
   margin-inline-start: calc((100% - var(--page-w, 100%)) / 2);
   height: clamp(480px, calc(100vh - 170px), 1000px);
   overflow: hidden;
-  cursor: grab;
+  cursor: var(--cur-grab);
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
 }
 
 .xs3d__stage.is-dragging {
-  cursor: grabbing;
+  cursor: var(--cur-grabbing);
 }
 
 /* Zoom and view buttons float in the empty sky, opposite the summit word */
@@ -979,7 +979,7 @@ html.xs-expanded {
   color: var(--on-stratum);
   transform-origin: 0 0;
   pointer-events: auto;
-  cursor: default;
+  cursor: var(--cur-default);
   transition: opacity var(--t3);
 }
 
