@@ -163,7 +163,10 @@
                   row(['[', ']'], 'Previous or next prompt'),
                   row(['1-6'], 'Choose a summit'),
                   row(['←', '→'], 'Previous or next summit'),
-                  row(['Esc'], 'Close a concept')
+                  row(['Drag'], 'Turn the 3D mountain'),
+                  row(['Shift', 'Drag'], 'Move it'),
+                  row(['Ctrl', 'Scroll'], 'Zoom in or out'),
+                  row(['Esc'], 'Close a concept or the bigger view')
                 )
               ),
               h('section', null,

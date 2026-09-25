@@ -511,7 +511,7 @@
 /* ---------- Cross-section ---------- */
 .xs-section {
   position: relative;
-  padding-block: 24px;
+  padding-block: 16px 24px;
 }
 
 .xs-bar {
@@ -520,7 +520,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 
 .xs-tabs {
@@ -850,9 +850,113 @@
   max-width: none;
 }
 
+/* The stage runs edge to edge of the page and fills the screen below the summit tabs */
 .xs3d__stage {
   position: relative;
-  height: clamp(460px, calc(100vh - 215px), 760px);
+  width: var(--page-w, 100%);
+  margin-inline-start: calc((100% - var(--page-w, 100%)) / 2);
+  height: clamp(480px, calc(100vh - 170px), 1000px);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.xs3d__stage.is-dragging {
+  cursor: grabbing;
+}
+
+/* Zoom and view buttons float in the empty sky, opposite the summit word */
+.xs3d__tools {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  z-index: 3;
+  display: grid;
+  justify-items: end;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.xs.is-empty .xs3d__tools {
+  display: none;
+}
+
+.xs3d__btns {
+  display: flex;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.xs3d__btn {
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.xs3d__hint {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+}
+
+.xs3d__hint b {
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+html[data-presenter="on"] .xs3d__hint {
+  display: none;
+}
+
+/* Bigger view: the stage fills the window */
+html.xs-expanded {
+  overflow: hidden;
+}
+
+.xs-host.is-expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background:
+    radial-gradient(64rem 42rem at 88% -12%, var(--bg-glow-1), transparent 70%),
+    radial-gradient(52rem 38rem at -12% 38%, var(--bg-glow-2), transparent 72%),
+    var(--bg);
+  animation: xs-expand var(--t3) var(--ease) both;
+}
+
+.xs-host.is-expanded .xs {
+  position: absolute;
+  inset: 0;
+}
+
+.xs-host.is-expanded .xs3d__stage {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+.xs-host.is-expanded .xs3d__head {
+  top: 22px;
+  left: var(--gutter);
+}
+
+.xs-host.is-expanded .xs3d__tools {
+  top: 22px;
+  right: var(--gutter);
+}
+
+@keyframes xs-expand {
+  from { opacity: 0; transform: scale(0.985); }
 }
 
 .xs3d__canvas {
@@ -882,6 +986,7 @@
   color: var(--on-stratum);
   transform-origin: 0 0;
   pointer-events: auto;
+  cursor: default;
   transition: opacity var(--t3);
 }
 

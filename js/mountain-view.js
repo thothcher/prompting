@@ -407,8 +407,49 @@
   }
 
   function destroyEngine() {
+    setExpanded(false);
     if (engine) engine.destroy();
     engine = null;
+  }
+
+  // Zoom, face-front and bigger-view buttons, with a reminder of the mouse controls.
+  let expandBtn = null;
+  let expanded = false;
+
+  function viewTools() {
+    const tool = (name, label, onclick) =>
+      h('button', { class: 'icon-btn xs3d__btn', type: 'button', 'aria-label': label, title: label, onclick }, icon(name));
+    expandBtn = tool('fullscreen', 'Bigger view', () => setExpanded(!expanded));
+    expandBtn.setAttribute('aria-pressed', 'false');
+    return h('div', { class: 'xs3d__tools' },
+      h('div', { class: 'xs3d__btns', role: 'group', 'aria-label': '3D view' },
+        tool('minus', 'Zoom out', () => engine && engine.zoomBy(1.25)),
+        tool('plus', 'Zoom in', () => engine && engine.zoomBy(0.8)),
+        tool('reset', 'Face the front again', () => engine && engine.resetView()),
+        expandBtn
+      ),
+      h('ul', { class: 'xs3d__hint', 'aria-label': 'Mouse controls' },
+        h('li', null, h('b', null, 'Drag'), ' to turn'),
+        h('li', null, h('b', null, 'Shift + drag'), ' to move'),
+        h('li', null, h('b', null, 'Ctrl + scroll'), ' to zoom')
+      )
+    );
+  }
+
+  // The bigger view fills the window with the 3D stage. Esc brings it back.
+  function setExpanded(on) {
+    on = !!on && mode === '3d' && M.summit >= 0;
+    if (on === expanded) return;
+    expanded = on;
+    closeConcept();
+    $('#m-xs-host').classList.toggle('is-expanded', on);
+    document.documentElement.classList.toggle('xs-expanded', on);
+    if (!expandBtn) return;
+    const label = on ? 'Back to the page' : 'Bigger view';
+    expandBtn.setAttribute('aria-pressed', String(on));
+    expandBtn.setAttribute('aria-label', label);
+    expandBtn.title = on ? label + ' (Esc)' : label;
+    expandBtn.replaceChildren(icon(on ? 'collapse' : 'fullscreen'));
   }
 
   const flag = (s) =>
@@ -431,9 +472,10 @@
     wrap.classList.add('is-3d');
     if (!engine) {
       const stage = h('div', { class: 'xs3d__stage' });
-      wrap.replaceChildren(h('div', { class: 'xs3d__head' }), stage);
+      wrap.replaceChildren(h('div', { class: 'xs3d__head' }), stage, viewTools());
       engine = new GOP.Mountain3D(stage, {
         onChip: openConcept,
+        onInteract: () => closeConcept(),
         onLost: () => {
           lost3d = true;
           mode = '2d';
@@ -446,6 +488,7 @@
     const head = wrap.querySelector('.xs3d__head');
     wrap.classList.toggle('is-empty', M.summit < 0);
     if (M.summit < 0) {
+      setExpanded(false);
       head.replaceChildren(emptyNote());
       engine.stage.hidden = true;
       return;
@@ -749,6 +792,10 @@
       closeConcept(true);
       return true;
     }
+    if (expanded && e.key === 'Escape') {
+      setExpanded(false);
+      return true;
+    }
     if (e.key === '[') {
       setPrompt(M.prompt - 1);
       return true;
@@ -783,11 +830,16 @@
     updateSlider();
     applyAll({ animate: false });
 
+    // The 3D stage runs edge to edge; --page-w is the page width without the scrollbar.
+    const pageWidth = () => document.documentElement.style.setProperty('--page-w', document.body.clientWidth + 'px');
+    pageWidth();
     window.addEventListener('resize', () => {
+      pageWidth();
       queueConnectors();
       clearTimeout(drawStars._t);
       drawStars._t = setTimeout(drawStars, 150);
     });
+    GOP.on('route', () => view().hidden && setExpanded(false));
     wide3d.addEventListener('change', () => applyAll({ animate: false }));
     if (window.ResizeObserver) new ResizeObserver(queueConnectors).observe($('#m-top'));
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueConnectors);
@@ -838,6 +890,7 @@
     last: () => goStep(steps().summary),
     stepOut() {
       if (pop) closeConcept(true);
+      else setExpanded(false);
     },
     status
   };

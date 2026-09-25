@@ -1,7 +1,9 @@
 /* The 3D cross-section of one summit: a layered mountain cut in half and
    drawn with three.js, which loads on demand from js/vendor. The concept
    buttons stay ordinary HTML. Each layer's buttons are mapped onto the cut
-   face with a perspective transform, so the text stays sharp and clickable. */
+   face with a perspective transform, so the text stays sharp and clickable.
+   The camera circles the mountain while the stage scrolls into view, then
+   faces the cut. Drag turns it, Shift + drag moves it, Ctrl + scroll zooms. */
 (() => {
   'use strict';
 
@@ -9,18 +11,30 @@
   const { h } = GOP;
 
   const DEG = Math.PI / 180;
+  const TAU = Math.PI * 2;
   const R = 10; // base radius
   const H = 11; // height
   const T_TOP = 0.7; // the four concept layers fill the mountain up to this height
   const LAYERS = 4;
   const BAND = T_TOP / LAYERS;
-  const BASE_AZ = -21 * DEG;
-  const BASE_EL = 15 * DEG;
+  const BASE_AZ = 0; // straight at the cut face
+  const BASE_EL = 16 * DEG;
+  const EL_MIN = 2 * DEG;
+  const EL_MAX = 72 * DEG;
+  const ZOOM_MIN = 0.42; // camera distance as a share of the fitted distance
+  const ZOOM_MAX = 1.9;
+  // While the stage scrolls in, the camera starts this far round the side,
+  // higher up and further out, and comes round to face the cut.
+  const INTRO_TURN = 270 * DEG;
+  const INTRO_RISE = 20 * DEG;
+  const INTRO_PULL = 0.35;
 
   // Layer 0 (L1, framework) is the top band; layer 3 (L4, foundations) sits on the ground.
   const tTop = (li) => T_TOP - BAND * li;
   const tBot = (li) => tTop(li) - BAND;
 
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  const smooth = (t) => t * t * (3 - 2 * t);
   const easeOut = (t) => 1 - Math.pow(1 - t, 3);
   const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
@@ -129,12 +143,13 @@
   }
 
   class Mountain3D {
-    constructor(stage, { onChip, onLost } = {}) {
+    constructor(stage, { onChip, onLost, onInteract } = {}) {
       const THREE = window.THREE;
       this.T = THREE;
       this.stage = stage;
       this.onChip = onChip;
       this.onLost = onLost;
+      this.onInteract = onInteract;
       this.canvas = h('canvas', { class: 'xs3d__canvas', 'aria-hidden': 'true' });
       this.overlay = h('div', { class: 'xs3d__overlay' });
       stage.append(this.canvas, this.overlay);
@@ -146,14 +161,23 @@
       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
       this.scene = new THREE.Scene();
-      this.camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 220);
-      this.target = new THREE.Vector3(0, H * 0.47, -1.2);
+      this.camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 260);
+      this.home = new THREE.Vector3(0, H * 0.47, -1.2);
       this.v = new THREE.Vector3();
-      this.az = BASE_AZ;
-      this.el = BASE_EL;
-      this.goalAz = BASE_AZ;
-      this.goalEl = BASE_EL;
-      this.dist = 36;
+      this.v2 = new THREE.Vector3();
+      this.v3 = new THREE.Vector3();
+      this.look = new THREE.Vector3();
+      // view: where the viewer has turned, moved and zoomed to.
+      // cur: what is drawn now, easing towards view plus the scroll-in orbit.
+      this.view = { az: BASE_AZ, el: BASE_EL, zoom: 1, target: this.home.clone() };
+      this.cur = { az: BASE_AZ, el: BASE_EL, zoom: 1, target: this.home.clone() };
+      this.goal = { az: 0, el: 0, zoom: 1, target: this.view.target };
+      this.intro = 1; // 0 while the stage scrolls in, 1 once it is in view
+      this.fitDist = 36;
+      this.spin = 0;
+      this.drag = null;
+      this.faceA = 1;
+      this.edgeMats = [];
       this.size = { w: 0, h: 0 };
       this.hover = false;
       this.tweens = [];
@@ -171,6 +195,13 @@
       this.loop = this.loop.bind(this);
       stage.addEventListener('pointermove', (e) => this.onMove(e));
       stage.addEventListener('pointerleave', () => (this.hover = false));
+      stage.addEventListener('pointerdown', (e) => this.onDown(e));
+      stage.addEventListener('pointerup', (e) => this.onUp(e));
+      stage.addEventListener('pointercancel', (e) => this.onUp(e));
+      stage.addEventListener('wheel', (e) => this.onWheel(e), { passive: false });
+      this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+      this.onScroll = () => this.updateIntro();
+      window.addEventListener('scroll', this.onScroll, { passive: true });
       this.canvas.addEventListener('webglcontextlost', (e) => {
         e.preventDefault();
         if (this.destroyed) return; // destroy() releases the context on purpose
@@ -259,6 +290,8 @@
     setSummit(summit, { animate = true, depth = this.depth } = {}) {
       const T = this.T;
       const P = this.pal;
+      // A new summit always opens facing the viewer; a re-theme keeps the view.
+      if (summit !== this.summit) this.resetView(false);
       this.summit = summit;
       this.depth = depth;
       this.disposeGroup();
@@ -463,8 +496,11 @@
         const t = (j / 48) * T_TOP;
         outline.push(new T.Vector3(shape.radius(0, t), t * H, z));
       }
-      out.add(new T.Line(new T.BufferGeometry().setFromPoints(outline), new T.LineBasicMaterial({ color: this.pal.line, transparent: true, opacity: 0.9 })));
+      const bright = new T.LineBasicMaterial({ color: this.pal.line, transparent: true, opacity: 0.9 });
       const faint = new T.LineBasicMaterial({ color: this.pal.line, transparent: true, opacity: 0.5 });
+      this.edgeMats = [[bright, 0.9], [faint, 0.5]];
+      this.faceA = -1; // re-apply the facing fade to the new lines
+      out.add(new T.Line(new T.BufferGeometry().setFromPoints(outline), bright));
       for (let li = 1; li < LAYERS; li++) {
         const t = tTop(li);
         const pts = [new T.Vector3(-shape.radius(Math.PI, t), t * H, z), new T.Vector3(shape.radius(0, t), t * H, z)];
@@ -525,9 +561,12 @@
     // the layer, so the text scales down evenly instead of overflowing.
     layoutPanels() {
       if (!this.group || !this.size.w || !this.size.h) return;
-      const keep = { az: this.az, el: this.el, sy: this.group.scale.y };
-      this.az = BASE_AZ;
-      this.el = BASE_EL;
+      const c = this.cur;
+      const keep = { az: c.az, el: c.el, zoom: c.zoom, target: c.target.clone(), sy: this.group.scale.y };
+      c.az = BASE_AZ;
+      c.el = BASE_EL;
+      c.zoom = 1;
+      c.target.copy(this.home);
       this.group.scale.y = 1;
       this.placeCamera();
       this.group.updateMatrixWorld(true);
@@ -549,8 +588,10 @@
         p.style.width = b.box.w.toFixed(1) + 'px';
         p.style.height = b.box.h.toFixed(1) + 'px';
       }
-      this.az = keep.az;
-      this.el = keep.el;
+      c.az = keep.az;
+      c.el = keep.el;
+      c.zoom = keep.zoom;
+      c.target.copy(keep.target);
       this.group.scale.y = keep.sy;
       this.placeCamera();
       this.group.updateMatrixWorld(true);
@@ -578,6 +619,18 @@
     updateOverlay() {
       if (!this.group) return;
       this.group.updateMatrixWorld(true);
+      // The concepts sit on the cut face, so they fade out as the camera
+      // turns away from it and are hidden while it looks from behind.
+      const cam = this.camera.position;
+      const f = cam.z / Math.hypot(cam.x, cam.y - T_TOP * H * 0.5 * this.group.scale.y, cam.z);
+      const a = smooth(clamp((f - 0.26) / 0.26, 0, 1));
+      if (a !== this.faceA) {
+        this.faceA = a;
+        this.overlay.style.opacity = a < 1 ? a.toFixed(3) : '';
+        this.overlay.style.visibility = a < 0.01 ? 'hidden' : '';
+        this.edgeMats.forEach(([m, o]) => (m.opacity = o * a)); // the cut outline goes with them
+      }
+      if (a < 0.01) return;
       for (const b of this.bands) {
         const q = this.projectRect(b.li);
         const m = q && quadMatrix(b.box.w, b.box.h, q);
@@ -648,28 +701,196 @@
 
     /* ---------------------------------------------------------- camera and loop */
 
+    interact() {
+      if (this.onInteract) this.onInteract();
+    }
+
     onMove(e) {
-      if (GOP.reduced()) return;
-      // Hold the model still while the pointer is over the concepts, so they are easy to click.
+      const d = this.drag;
+      if (!d || e.pointerId !== d.id) {
+        // Hold the model still while the pointer is over the concepts, so they are easy to click.
+        this.hover = !!(e.target.closest && e.target.closest('.xs3d__panel'));
+        return;
+      }
+      const dx = e.clientX - d.x;
+      const dy = e.clientY - d.y;
+      d.x = e.clientX;
+      d.y = e.clientY;
+      if (d.pan) {
+        this.panBy(dx, dy);
+        return;
+      }
+      const rate = (1.15 * Math.PI) / Math.max(640, this.size.w);
+      this.view.az -= dx * rate;
+      this.view.el = clamp(this.view.el + dy * rate, EL_MIN, EL_MAX);
+      d.vx = d.vx * 0.4 - dx * rate * 0.6;
+      d.t = performance.now();
+    }
+
+    // Drag turns the mountain; Shift + drag or the right button moves it.
+    onDown(e) {
+      if (this.drag || e.button === 1 || e.button > 2) return;
       if (e.target.closest && e.target.closest('.xs3d__panel')) return;
+      this.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, pan: e.button === 2 || e.shiftKey, vx: 0, t: 0 };
+      this.spin = 0;
+      if (e.pointerType === 'mouse') e.preventDefault(); // no text selection while dragging
+      try {
+        this.stage.setPointerCapture(e.pointerId);
+      } catch (err) {
+        /* the pointer may already be gone */
+      }
+      this.stage.classList.add('is-dragging');
+      this.interact();
+    }
+
+    onUp(e) {
+      const d = this.drag;
+      if (!d || e.pointerId !== d.id) return;
+      this.drag = null;
+      this.stage.classList.remove('is-dragging');
+      // A flick keeps turning for a moment.
+      if (!d.pan && !GOP.reduced() && performance.now() - d.t < 90) this.spin = d.vx;
+    }
+
+    // Ctrl + scroll (and trackpad pinch) zooms; plain scrolling still moves the page.
+    onWheel(e) {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const unit = e.deltaMode === 1 ? 0.05 : e.deltaMode === 2 ? 1 : 0.0017;
+      this.zoomAt(Math.exp(clamp(e.deltaY * unit, -0.5, 0.5)), e.clientX, e.clientY);
+    }
+
+    // f < 1 zooms in, f > 1 zooms out. Zooming in heads for the point under
+    // the pointer; zooming out drifts back to the whole mountain.
+    zoomAt(f, cx, cy) {
+      const v = this.view;
+      const z0 = v.zoom;
+      const z1 = clamp(z0 * f, ZOOM_MIN, ZOOM_MAX);
+      if (Math.abs(z1 - z0) < 1e-6) return;
+      if (z1 < z0) {
+        const hit = cx == null ? null : this.pointAt(cx, cy);
+        if (hit) v.target.lerp(hit, 1 - z1 / z0);
+      } else if (z0 < 1) {
+        v.target.lerp(this.home, Math.min(1, (z1 - z0) / (1 - z0)));
+      }
+      v.zoom = z1;
+      this.clampTarget();
+      this.interact();
+    }
+
+    zoomBy(f) {
+      this.zoomAt(f);
+    }
+
+    // The point under the pointer, on the plane through the target that faces the camera.
+    pointAt(cx, cy) {
       const r = this.stage.getBoundingClientRect();
-      const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
-      const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
-      this.goalAz = BASE_AZ + nx * 7 * DEG;
-      this.goalEl = BASE_EL - ny * 3 * DEG;
-      this.hover = true;
+      if (!r.width || !r.height) return null;
+      const cam = this.camera;
+      const dir = this.v2.set(((cx - r.left) / r.width) * 2 - 1, 1 - ((cy - r.top) / r.height) * 2, 0.5).unproject(cam).sub(cam.position).normalize();
+      const fwd = cam.getWorldDirection(this.v3);
+      const den = dir.dot(fwd);
+      if (den < 1e-3) return null;
+      const s = this.view.target.clone().sub(cam.position).dot(fwd) / den;
+      return cam.position.clone().addScaledVector(dir, s);
+    }
+
+    panBy(dx, dy) {
+      const cam = this.camera;
+      const perPx = (2 * this.fitDist * this.cur.zoom * Math.tan((cam.fov * DEG) / 2)) / this.size.h;
+      const t = this.view.target;
+      t.addScaledVector(this.v2.setFromMatrixColumn(cam.matrixWorld, 0), -dx * perPx);
+      t.addScaledVector(this.v2.setFromMatrixColumn(cam.matrixWorld, 1), dy * perPx);
+      this.clampTarget();
+    }
+
+    clampTarget() {
+      const t = this.view.target;
+      t.set(clamp(t.x, -R, R), clamp(t.y, 0.5, H * 1.1), clamp(t.z, -R * 0.7, R * 0.3));
+    }
+
+    resetView(user = true) {
+      const v = this.view;
+      v.az = BASE_AZ;
+      v.el = BASE_EL;
+      v.zoom = 1;
+      v.target.copy(this.home);
+      this.spin = 0;
+      if (user) this.interact();
+    }
+
+    // How far the stage has scrolled into view: 0 as its top edge appears,
+    // 1 once nearly all of it is on screen.
+    updateIntro() {
+      if (!this.running) return;
+      let p = 1;
+      if (!GOP.reduced()) {
+        const r = this.stage.getBoundingClientRect();
+        const vh = window.innerHeight;
+        if (r.height > 0) p = clamp(((vh - r.top) / Math.min(r.height, vh) - 0.04) / 0.86, 0, 1);
+      }
+      if (p < 0.97 && this.intro >= 0.97) this.interact();
+      this.intro = p;
+    }
+
+    goals(now) {
+      const v = this.view;
+      const g = this.goal;
+      const away = 1 - smooth(this.intro);
+      g.az = v.az - away * INTRO_TURN;
+      g.el = v.el + away * INTRO_RISE;
+      g.zoom = v.zoom * (1 + away * INTRO_PULL);
+      g.target = v.target;
+      if (!this.drag && !this.hover && !GOP.reduced()) {
+        g.az += Math.sin(now * 0.0002) * 2 * DEG;
+        g.el += Math.sin(now * 0.00016) * 0.6 * DEG;
+      }
+      return g;
+    }
+
+    // Eases the drawn camera towards the goal. Returns false once it has arrived.
+    approach(g, k) {
+      const c = this.cur;
+      c.az += Math.round((g.az - c.az) / TAU) * TAU; // take the short way round
+      const dAz = g.az - c.az;
+      const dEl = g.el - c.el;
+      const dZoom = g.zoom - c.zoom;
+      const dT = this.v3.copy(g.target).sub(c.target);
+      if (Math.abs(dAz) < 1e-5 && Math.abs(dEl) < 1e-5 && Math.abs(dZoom) < 1e-5 && dT.lengthSq() < 1e-8) return false;
+      c.az += dAz * k;
+      c.el += dEl * k;
+      c.zoom += dZoom * k;
+      c.target.addScaledVector(dT, k);
+      return true;
+    }
+
+    snap() {
+      const g = this.goals(performance.now());
+      const c = this.cur;
+      c.az = g.az;
+      c.el = g.el;
+      c.zoom = g.zoom;
+      c.target.copy(g.target);
     }
 
     placeCamera() {
       const c = this.camera;
-      const t = this.target;
+      const s = this.cur;
+      // Facing the cut, the camera looks at the cut face. Going round the back,
+      // it pivots on the middle of the massif and steps back to keep it all in view.
+      const back = (1 - Math.cos(s.az)) / 2;
+      const t = this.look.copy(s.target);
+      t.z -= back * 3.2;
+      const dist = this.fitDist * s.zoom * (1 + back * 0.3);
       c.position.set(
-        t.x + this.dist * Math.cos(this.el) * Math.sin(this.az),
-        t.y + this.dist * Math.sin(this.el),
-        t.z + this.dist * Math.cos(this.el) * Math.cos(this.az)
+        t.x + dist * Math.cos(s.el) * Math.sin(s.az),
+        t.y + dist * Math.sin(s.el),
+        t.z + dist * Math.cos(s.el) * Math.cos(s.az)
       );
       c.lookAt(t);
       c.updateMatrixWorld();
+      this.scene.fog.near = dist + 12;
+      this.scene.fog.far = dist + 68;
     }
 
     resize() {
@@ -682,8 +903,9 @@
       this.camera.aspect = w / hh;
       const vf = (this.camera.fov * DEG) / 2;
       const hf = Math.atan(Math.tan(vf) * this.camera.aspect);
-      this.dist = Math.max((R * 1.08) / Math.tan(hf), (H * 0.56) / Math.tan(vf)) + 1.2;
+      this.fitDist = Math.max((R * 1.08) / Math.tan(hf), (H * 0.56) / Math.tan(vf)) + 1.2;
       this.camera.updateProjectionMatrix();
+      this.updateIntro();
       this.placeCamera();
       this.layoutPanels();
       this.dirty = true;
@@ -715,6 +937,10 @@
     start() {
       if (this.running || this.destroyed) return;
       this.running = true;
+      this.lastT = 0;
+      this.updateIntro();
+      this.snap(); // nothing was on screen, so jump straight to the pose for this scroll position
+      this.dirty = true;
       this.raf = requestAnimationFrame(this.loop);
     }
 
@@ -726,20 +952,17 @@
     loop(now) {
       if (!this.running) return;
       this.raf = requestAnimationFrame(this.loop);
+      const dt = this.lastT ? Math.min(64, now - this.lastT) : 16.7;
+      const frames = dt / 16.7;
+      this.lastT = now;
       let moving = this.runTweens(now);
-      if (!GOP.reduced()) {
-        if (!this.hover) {
-          this.goalAz = BASE_AZ + Math.sin(now * 0.0002) * 1.8 * DEG;
-          this.goalEl = BASE_EL + Math.sin(now * 0.00016) * 0.6 * DEG;
-        }
-        const dAz = (this.goalAz - this.az) * 0.06;
-        const dEl = (this.goalEl - this.el) * 0.06;
-        if (Math.abs(dAz) > 1e-5 || Math.abs(dEl) > 1e-5) {
-          this.az += dAz;
-          this.el += dEl;
-          moving = true;
-        }
+      if (this.spin) {
+        this.view.az += this.spin * frames;
+        this.spin *= Math.pow(0.93, frames);
+        if (Math.abs(this.spin) < 2e-4) this.spin = 0;
       }
+      const k = GOP.reduced() ? 1 : 1 - Math.pow(1 - 0.14, frames);
+      if (this.approach(this.goals(now), k)) moving = true;
       if (moving || this.dirty) this.renderNow();
     }
 
@@ -757,6 +980,7 @@
       this.ro.disconnect();
       this.io.disconnect();
       document.removeEventListener('visibilitychange', this.onVisibility);
+      window.removeEventListener('scroll', this.onScroll);
       this.disposeGroup();
       if (this.grid) {
         this.grid.geometry.dispose();

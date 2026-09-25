@@ -17,6 +17,7 @@ A presentation site about writing prompts that build real Angular and Next.js pr
 - Eleven one-sentence prompts, each asking an AI for a whole Angular or Next.js website: a blog, an admin dashboard, an online store, a team chat, a booking site, an insurance quote form, a SaaS landing site, a Kanban board, an AI chat, an e-learning site and a news site. A small slider switches between them.
 - Every technical word in a prompt is a mountain peak in the range, and peak height shows how many concepts sit under the word.
 - The selected word opens as a 3D mountain cut in half, drawn with three.js. Its four layers are Framework, Code, Browser and network, and Foundations, and every concept opens a short note. On phones, or without WebGL, a flat layered version is shown instead.
+- As the 3D mountain scrolls into view, the camera circles it and stops facing the cut. Drag to turn it, Shift+drag to move it, and Ctrl+scroll (or pinch) to zoom. The buttons at its top right zoom in and out, turn it back to face you, and open a bigger view that fills the window.
 - A word keeps the same Code, Browser and Foundations layers in every prompt. Only the Framework layer changes between Angular and Next.js. The library holds 35 words and about 490 concepts.
 
 ## Run it
@@ -35,7 +36,7 @@ Turn on presenter mode with the projector button in the top bar or with Shift+P.
 | 1 to 9, 0 | Open prompt 01 to 10 (on the Mountain page, 1 to 6 choose a summit) |
 | [ / ] | Previous or next prompt on the Mountain page |
 | Left / Right arrow | Previous or next block, or previous or next summit |
-| Esc | Close the open window, block or prompt |
+| Esc | Close the open window, block or prompt, or the bigger 3D view |
 | Shift+P | Presenter mode on or off |
 | PageDown, Right arrow, Space | Next step (presenter mode) |
 | PageUp, Left arrow | Previous step (presenter mode) |
