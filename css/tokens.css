@@ -39,6 +39,14 @@
   --accent-2: #a6d7ff;
   --accent-soft: rgba(95, 180, 255, 0.13);
   --glow: rgba(95, 180, 255, 0.3);
+
+  /* Scrollbars */
+  --sb-track: #030e22;
+  --sb-thumb: #2257ac;
+  --sb-thumb-a: #2b69c6;
+  --sb-thumb-b: #0b3f8f;
+  --sb-hover-a: #5fb4ff;
+  --sb-hover-b: #2257ac;
   --focus: #8fd0ff;
   --grad-brand: linear-gradient(90deg, var(--p-b), var(--p-e) 50%, var(--p-s));
 
@@ -148,6 +156,13 @@
   --accent-2: #063271;
   --accent-soft: rgba(11, 91, 211, 0.09);
   --glow: rgba(11, 91, 211, 0.18);
+
+  --sb-track: #e1e9f5;
+  --sb-thumb: #5e82b8;
+  --sb-thumb-a: #6f93c9;
+  --sb-thumb-b: #2c579a;
+  --sb-hover-a: #0b5bd3;
+  --sb-hover-b: #063271;
   --focus: #0b5bd3;
 
   --p-b: hsl(189 92% 28%);

@@ -17,6 +17,55 @@ html[data-presenter="on"] {
   font-size: 122%;
 }
 
+/* Scrollbars: a slim brand-blue thumb that widens on hover. The page keeps a
+   quiet track; windows and scrolling panels get a clear one. Firefox only
+   takes the two plain colors. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: var(--sb-thumb) var(--sb-track);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* The page's own scrollbar (Chrome styles it through body) */
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--sb-track);
+  box-shadow: inset 1px 0 0 var(--line);
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 48px;
+  background: linear-gradient(180deg, var(--sb-thumb-a), var(--sb-thumb-b)) padding-box;
+  border: 3px solid transparent;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  min-width: 48px;
+  background-image: linear-gradient(90deg, var(--sb-thumb-a), var(--sb-thumb-b));
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background-image: linear-gradient(180deg, var(--sb-hover-a), var(--sb-hover-b));
+  border-width: 2px;
+}
+
+::-webkit-scrollbar-thumb:horizontal:hover,
+::-webkit-scrollbar-thumb:horizontal:active {
+  background-image: linear-gradient(90deg, var(--sb-hover-a), var(--sb-hover-b));
+}
+
 html.is-locked {
   overflow: hidden;
 }

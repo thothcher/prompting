@@ -285,7 +285,6 @@
 .range-scroll {
   position: relative;
   overflow-x: auto;
-  scrollbar-width: thin;
 }
 
 .range {
