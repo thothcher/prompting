@@ -66,14 +66,14 @@ body::-webkit-scrollbar-track {
   background-image: linear-gradient(90deg, var(--sb-hover-a), var(--sb-hover-b));
 }
 
-/* Cursors: a faceted blue arrowhead that lights up over anything clickable,
-   and a move cursor over the 3D mountain. Text fields keep the text cursor.
-   js/cursor.js adds the trailing reticle. */
+/* Cursors: a small blue dot that turns white over anything clickable and
+   hollow over the 3D mountain. Text fields keep the text cursor.
+   js/cursor.js adds the trailing ring. */
 :root {
-  --cur-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 3 24 10.4 14.6 14.6 10.4 24Z' fill='none' stroke='%23ffffff' stroke-opacity='.35' stroke-width='3.6' stroke-linejoin='round'/%3E%3Cpath d='M3 3 24 10.4 14.6 14.6Z' fill='%239fd0ff'/%3E%3Cpath d='M3 3 14.6 14.6 10.4 24Z' fill='%232b69c6'/%3E%3Cpath d='M3 3 24 10.4 14.6 14.6 10.4 24Z' fill='none' stroke='%23041d45' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 3 3, default;
-  --cur-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 3 24 10.4 14.6 14.6 10.4 24Z' fill='none' stroke='%235fb4ff' stroke-opacity='.6' stroke-width='4.6' stroke-linejoin='round'/%3E%3Cpath d='M3 3 24 10.4 14.6 14.6Z' fill='%23ffffff'/%3E%3Cpath d='M3 3 14.6 14.6 10.4 24Z' fill='%237cc4ff'/%3E%3Cpath d='M3 3 24 10.4 14.6 14.6 10.4 24Z' fill='none' stroke='%23063271' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 3 3, pointer;
-  --cur-grab: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='%239fd0ff' stroke='%23041d45' stroke-width='1.3' stroke-linejoin='round'%3E%3Cpath d='M16 2.5 20 7.5H12Z'/%3E%3Cpath d='M16 29.5 12 24.5H20Z'/%3E%3Cpath d='M2.5 16 7.5 12V20Z'/%3E%3Cpath d='M29.5 16 24.5 20V12Z'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23041d45' stroke-width='3.6'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%239fd0ff' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='16' r='1.8' fill='%239fd0ff' stroke='%23041d45' stroke-width='1'/%3E%3C/svg%3E") 16 16, grab;
-  --cur-grabbing: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='%23ffffff' stroke='%23041d45' stroke-width='1.3' stroke-linejoin='round'%3E%3Cpath d='M16 5.5 20 10.5H12Z'/%3E%3Cpath d='M16 26.5 12 21.5H20Z'/%3E%3Cpath d='M5.5 16 10.5 12V20Z'/%3E%3Cpath d='M26.5 16 21.5 20V12Z'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='4.2' fill='%235fb4ff' stroke='%23041d45' stroke-width='1.5'/%3E%3C/svg%3E") 16 16, grabbing;
+  --cur-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='4.2' fill='none' stroke='%23ffffff' stroke-opacity='.4' stroke-width='3.4'/%3E%3Ccircle cx='10' cy='10' r='4.2' fill='%235fb4ff' stroke='%23041d45' stroke-width='1.4'/%3E%3C/svg%3E") 10 10, default;
+  --cur-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='5' fill='none' stroke='%235fb4ff' stroke-opacity='.55' stroke-width='3.4'/%3E%3Ccircle cx='10' cy='10' r='5' fill='%23ffffff' stroke='%23063271' stroke-width='1.4'/%3E%3C/svg%3E") 10 10, pointer;
+  --cur-grab: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='5' fill='none' stroke='%23041d45' stroke-width='3.4'/%3E%3Ccircle cx='10' cy='10' r='5' fill='none' stroke='%239fd0ff' stroke-width='1.6'/%3E%3Ccircle cx='10' cy='10' r='1.6' fill='%239fd0ff'/%3E%3C/svg%3E") 10 10, grab;
+  --cur-grabbing: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='3.6' fill='%239fd0ff' stroke='%23041d45' stroke-width='1.4'/%3E%3C/svg%3E") 10 10, grabbing;
 }
 
 html {

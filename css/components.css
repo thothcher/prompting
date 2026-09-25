@@ -862,8 +862,8 @@
   color: var(--text-3);
 }
 
-/* ---------- Cursor reticle (js/cursor.js) ---------- */
-/* Four corner brackets around the tip of the mouse pointer */
+/* ---------- Cursor ring (js/cursor.js) ---------- */
+/* A thin circle that trails the mouse */
 .cursor-ring {
   position: fixed;
   left: 0;
@@ -886,48 +886,30 @@ html.cursor-hidden .cursor-ring {
 }
 
 .cursor-ring::before {
-  --c: var(--accent);
-  --l: 8px;
-  --w: 1.5px;
   content: "";
   position: absolute;
-  left: -15px;
-  top: -15px;
-  width: 30px;
-  height: 30px;
-  background:
-    linear-gradient(var(--c), var(--c)) left top / var(--l) var(--w),
-    linear-gradient(var(--c), var(--c)) left top / var(--w) var(--l),
-    linear-gradient(var(--c), var(--c)) right top / var(--l) var(--w),
-    linear-gradient(var(--c), var(--c)) right top / var(--w) var(--l),
-    linear-gradient(var(--c), var(--c)) left bottom / var(--l) var(--w),
-    linear-gradient(var(--c), var(--c)) left bottom / var(--w) var(--l),
-    linear-gradient(var(--c), var(--c)) right bottom / var(--l) var(--w),
-    linear-gradient(var(--c), var(--c)) right bottom / var(--w) var(--l);
-  background-repeat: no-repeat;
-  filter: drop-shadow(0 0 4px var(--glow));
-  transition: transform var(--t2) var(--ease);
+  left: -13px;
+  top: -13px;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0.75;
+  transition: transform var(--t2) var(--ease), background var(--t2), border-color var(--t2), opacity var(--t2);
 }
 
-/* Over something clickable the brackets turn and close in: locked on */
+/* Over something clickable it grows and fills softly */
 .cursor-ring.is-link::before {
-  --c: var(--accent-2);
-  transform: rotate(45deg) scale(0.8);
+  border-color: var(--accent-2);
+  background: var(--accent-soft);
+  opacity: 1;
+  transform: scale(1.4);
 }
 
-/* Over the 3D mountain they open wide around the move cursor */
 .cursor-ring.is-grab::before {
-  transform: scale(1.55);
+  transform: scale(1.2);
 }
 
 .cursor-ring.is-down::before {
-  transform: scale(0.62);
-}
-
-.cursor-ring.is-link.is-down::before {
-  transform: rotate(45deg) scale(0.55);
-}
-
-.cursor-ring.is-grab.is-down::before {
-  transform: rotate(45deg) scale(1.2);
+  transform: scale(0.75);
 }

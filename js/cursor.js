@@ -1,5 +1,4 @@
-/* A HUD reticle that trails the mouse: four corner brackets that turn and
-   close in on anything clickable, and open wide over the 3D mountain.
+/* A thin ring that trails the mouse and grows over anything clickable.
    It also helps an audience follow the pointer on a projector. Only on
    devices with a mouse, and not when the viewer asks for reduced motion. */
 (() => {
@@ -34,7 +33,7 @@
     ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
   }
 
-  // The reticle's shape follows the cursor the page shows at that spot.
+  // The ring's state follows the cursor the page shows at that spot.
   function kind(el) {
     const c = el && el.nodeType === 1 ? getComputedStyle(el).cursor : '';
     if (/grab(bing)?$/.test(c)) return 'grab';
