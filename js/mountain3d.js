@@ -151,8 +151,10 @@
       this.onLost = onLost;
       this.onInteract = onInteract;
       this.canvas = h('canvas', { class: 'xs3d__canvas', 'aria-hidden': 'true' });
+      // The summit word rides on top of the peak; the concepts sit on the cut face.
+      this.label = h('div', { class: 'xs3d__summit' });
       this.overlay = h('div', { class: 'xs3d__overlay' });
-      stage.append(this.canvas, this.overlay);
+      stage.append(this.canvas, this.label, this.overlay);
 
       this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
       this.renderer.setClearColor(0x000000, 0);
@@ -162,7 +164,7 @@
 
       this.scene = new THREE.Scene();
       this.camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 260);
-      this.home = new THREE.Vector3(0, H * 0.47, -1.2);
+      this.home = new THREE.Vector3(0, H * 0.52, -1.2);
       this.v = new THREE.Vector3();
       this.v2 = new THREE.Vector3();
       this.v3 = new THREE.Vector3();
@@ -174,6 +176,8 @@
       this.goal = { az: 0, el: 0, zoom: 1, target: this.view.target };
       this.intro = 1; // 0 while the stage scrolls in, 1 once it is in view
       this.fitDist = 36;
+      this.fitH = 1; // stage height below the space kept for the summit word
+      this.reserve = 0;
       this.spin = 0;
       this.drag = null;
       this.faceA = 1;
@@ -211,6 +215,7 @@
 
       this.ro = new ResizeObserver(() => this.resize());
       this.ro.observe(stage);
+      this.ro.observe(this.label); // presenter mode and web fonts change its height
       this.io = new IntersectionObserver((entries) => {
         this.visible = entries.some((en) => en.isIntersecting);
         if (this.visible && !document.hidden) this.start();
@@ -220,7 +225,7 @@
       this.onVisibility = () => (document.hidden ? this.stop() : this.visible && this.start());
       document.addEventListener('visibilitychange', this.onVisibility);
       GOP.on('theme', () => !this.destroyed && this.retheme());
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => !this.destroyed && this.layoutPanels());
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => !this.destroyed && this.resize());
       this.resize();
     }
 
@@ -287,13 +292,18 @@
     /* ---------------------------------------------------------- summit */
 
     // summit: { key, word, layers: [{ code, name, sub, items: [concept] } x 4] }
-    setSummit(summit, { animate = true, depth = this.depth } = {}) {
+    // label: the summit word, tagline and count, shown on top of the peak.
+    setSummit(summit, { animate = true, depth = this.depth, label } = {}) {
       const T = this.T;
       const P = this.pal;
       // A new summit always opens facing the viewer; a re-theme keeps the view.
       if (summit !== this.summit) this.resetView(false);
       this.summit = summit;
       this.depth = depth;
+      if (label) {
+        this.label.replaceChildren(label);
+        this.fit();
+      }
       this.disposeGroup();
       const shape = (this.shape = makeShape(hash(summit.key + ':' + summit.word)));
       const group = (this.group = new T.Group());
@@ -630,12 +640,27 @@
         this.overlay.style.visibility = a < 0.01 ? 'hidden' : '';
         this.edgeMats.forEach(([m, o]) => (m.opacity = o * a)); // the cut outline goes with them
       }
+      this.placeLabel();
       if (a < 0.01) return;
       for (const b of this.bands) {
         const q = this.projectRect(b.li);
         const m = q && quadMatrix(b.box.w, b.box.h, q);
         b.panel.style.transform = m || 'scale(0)';
       }
+    }
+
+    // Keeps the summit word centred just above the tip of the peak.
+    placeLabel() {
+      const pk = this.shape.peak;
+      this.v.set(0, pk.baseY + pk.height, pk.cz).applyMatrix4(this.group.matrixWorld).project(this.camera);
+      if (this.v.z > 1) {
+        this.label.style.visibility = 'hidden';
+        return;
+      }
+      const x = ((this.v.x + 1) / 2) * this.size.w;
+      const y = ((1 - this.v.y) / 2) * this.size.h;
+      this.label.style.visibility = '';
+      this.label.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -100%)`;
     }
 
     /* ---------------------------------------------------------- depth */
@@ -797,7 +822,7 @@
 
     panBy(dx, dy) {
       const cam = this.camera;
-      const perPx = (2 * this.fitDist * this.cur.zoom * Math.tan((cam.fov * DEG) / 2)) / this.size.h;
+      const perPx = (2 * this.fitDist * this.cur.zoom * Math.tan((cam.fov * DEG) / 2)) / this.fitH;
       const t = this.view.target;
       t.addScaledVector(this.v2.setFromMatrixColumn(cam.matrixWorld, 0), -dx * perPx);
       t.addScaledVector(this.v2.setFromMatrixColumn(cam.matrixWorld, 1), dy * perPx);
@@ -900,16 +925,30 @@
       if (!w || !hh) return;
       this.size = { w, h: hh };
       this.renderer.setSize(w, hh, false);
-      this.camera.aspect = w / hh;
-      const vf = (this.camera.fov * DEG) / 2;
-      const hf = Math.atan(Math.tan(vf) * this.camera.aspect);
-      this.fitDist = Math.max((R * 1.08) / Math.tan(hf), (H * 0.56) / Math.tan(vf)) + 1.2;
-      this.camera.updateProjectionMatrix();
+      this.fit();
       this.updateIntro();
+      this.dirty = true;
+      this.renderNow();
+    }
+
+    // Frames the mountain in the stage below the summit word: the camera is
+    // fitted to that lower part, and the view is extended upwards to cover
+    // the space the word takes.
+    fit() {
+      const { w, h: hh } = this.size;
+      if (!w || !hh) return;
+      const lab = this.label.offsetHeight;
+      this.reserve = lab ? Math.round(Math.min(hh * 0.32, lab + 26)) : 0;
+      const hm = (this.fitH = hh - this.reserve);
+      const cam = this.camera;
+      cam.aspect = w / hm;
+      const vf = (cam.fov * DEG) / 2;
+      const hf = Math.atan(Math.tan(vf) * cam.aspect);
+      this.fitDist = Math.max((R * 1.08) / Math.tan(hf), (H * 0.56) / Math.tan(vf)) + 1.2;
+      cam.setViewOffset(w, hm, 0, -this.reserve, w, hh); // also updates the projection
       this.placeCamera();
       this.layoutPanels();
       this.dirty = true;
-      this.renderNow();
     }
 
     tween({ dur, ease = easeOut, update, done }) {

@@ -490,11 +490,11 @@
     }
     const s = P.summits[M.summit];
     wrap.setAttribute('aria-labelledby', 'm-tab-' + M.summit);
-    head.replaceChildren(flag(s));
+    head.replaceChildren();
     engine.stage.hidden = false;
     engine.setSummit(
       { key: s.key, word: s.word, layers: P.layers.map((L) => ({ code: L.code, name: L.name, sub: L.sub, items: s.lists[L.id] })) },
-      { animate, depth: M.depth }
+      { animate, depth: M.depth, label: flag(s) }
     );
   }
 
